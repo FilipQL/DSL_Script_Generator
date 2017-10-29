@@ -1,0 +1,100 @@
+/* LAB INPUTS (ID, Description, Popover checkbox, Settings button) */
+.lab-inputs {
+  padding-top: 20px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#lab-id {
+  width: 17%;
+}
+
+#lab-description {
+  width: 57%;
+}
+
+#lab-popover {
+  width: 124px;
+  margin: 0;
+}
+
+
+
+/* Popover - additional stylings */
+#lab-popover .btn-default:hover,
+#lab-popover .btn-default:active {
+  color: #222;
+  background-color: #ffffff;
+  border-color: #cccccc;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+#lab-popover .btn-default.active {
+  color: #555;
+  background-color: #EEEEEE;
+  border-color: #CCCCCC;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+#lab-popover .btn-default.active:hover {
+  color: #555;
+  background-color: #EEEEEE;
+  border-color: #CCCCCC;
+}
+
+
+
+/* Popover - "Fancy Chekcbox" */
+.form-group input[type="checkbox"] {
+  display: none;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span {
+  width: 20px;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span:first-child {
+  display: none;
+}
+.form-group input[type="checkbox"] + .btn-group > label span:last-child {
+  display: inline-block;
+}
+
+.form-group input[type="checkbox"]:checked + .btn-group > label span:first-child {
+  display: inline-block;
+}
+.form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  .lab-inputs {
+    display: block;
+  }
+
+  #lab-id, #lab-description, #lab-popover {
+    width: 100%;
+  }
+}
+
+
+
+/* Suggestions Configuration */
+.tab-pane-suggestions {
+  padding: 20px;
+}
+
+
+
+/* VIS NETWORK - LAB SETUP */
+#mynetwork {
+  width: 100%;
+  border-top: 1px solid #D6D9D8;
+}

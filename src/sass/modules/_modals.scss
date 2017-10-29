@@ -1,0 +1,31 @@
+.modal-header {
+  background: #337AB7;
+  color: #ffffff;
+
+  .close {
+    color: #ffffff;
+    opacity: 1;
+  }
+}
+
+#vsi-port-settings-1, #vsi-port-settings-2 {
+  margin-bottom: 15px;
+}
+
+.vsi-port-settings-heading {
+  margin-left: 15px;
+  .label-primary {
+    font-size: 1em;
+  }
+}
+
+.equal-sign {
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 24px;
+  color: #555;
+}
+
+
+
+

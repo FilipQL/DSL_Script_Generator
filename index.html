@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DSL Script Generator</title>
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="dist/app.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" defer></script>
+    <script src="app.config.js" defer></script>
+    <script src="dist/app.js" defer></script>
+
+    <style>
+        pre.tooltip-pre {
+            background: rgba(250, 250, 250, .85);
+            border: 0;
+            margin: 0;
+            padding: 0;
+            resize: none;
+        }
+
+        pre.tooltip-pre > code {
+            margin: 0;
+            padding: 0;
+        }
+
+        .tooltip-inner {
+            max-width: 480px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <ul class="nav nav-tabs bordered">
+            <li class="active">
+                <a href="#lab-setup" data-toggle="tab">
+                    <i class="fa fa-sitemap"></i>
+                    Lab Setup
+                </a>
+            </li>
+            <li>
+                <a href="#dsl" data-toggle="tab">
+                    <i class="fa fa-file-text"></i>
+                    DSL
+                </a>
+            </li>
+            <li id="ie-tab" class="hidden">
+                <a href="#ie" data-toggle="tab">
+                    <i class="fa fa-exchange"></i>
+                    Import/Export Project
+                </a>
+            </li>
+        </ul>
+        <!-- / Nav tabs -->
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- LAB SETUP -->
+            <div class="tab-pane fade in active" id="lab-setup">
+                <div class="lab-inputs">
+                    <div id="lab-id" class="input-group">
+                        <span class="input-group-addon">ID</span>
+                        <input type="text" class="form-control" name="dsl_id" id="dsl_id" required>
+                    </div>
+
+                    <div id="lab-description" class="input-group">
+                        <span class="input-group-addon">Description</span>
+                        <input type="text" class="form-control" name="dsl_description" id="dsl_description">
+                    </div>
+
+                    <div id="lab-popover" class="form-group">
+                        <input type="checkbox" name="lab-popover-checkbox" id="lab-popover-checkbox" autocomplete="off" />
+                        <div class="btn-group">
+                            <label for="lab-popover-checkbox" class="btn btn-default">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                <span> </span>
+                            </label>
+                            <label for="lab-popover-checkbox" class="btn btn-default active">
+                                Popover
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="lab-settings" class="btn btn-default" data-toggle="modal" data-target="#settings-popUp">
+                        <i class="glyphicon glyphicon-tasks"></i>
+                    </button>
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="mynetwork"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- / LAB SETUP -->
+
+            <!-- DSL -->
+            <div class="tab-pane fade" id="dsl">
+                <div id="test">
+                    <pre><code id="dsl-script" style="white-space: pre;"></code></pre>
+
+                    <div id="dsl-buttons" class="text-center">
+                        <button class="btn btn-primary clipboard-btn" data-clipboard-target="#dsl-script">
+                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                            Copy to clipboard
+                        </button>
+
+                        <button id="download-dsl" class="btn btn-success">
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- / DSL -->
+
+            <!-- IMPORT/EXPORT PROJECT -->
+            <div class="tab-pane fade" id="ie">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="text-center">
+                            Projects are exported as JSON files.
+                        </p>
+
+                        <p class="text-center">
+                            <button id="export" type="button" class="btn btn-danger">
+                                <i class="fa fa-fw fa-download"></i>
+                                Export Project
+                            </button>
+
+                            <label class="btn btn-warning">
+                                <i class="fa fa-fw fa-upload"></i>
+                                Import Project
+                                <input class="hidden" type="file" id="project-file" accept=".json">
+                            </label>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- / IMPORT/EXPORT PROJECT -->
+        </div>
+        <!-- / Tab panes -->
+    </div>
+
+
+    <div id="settings-popUp" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Configure Suggestions</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div id="error_alert2" class="alert alert-danger hidden" style="padding-left: 0; padding-right: 5px;">
+                        <div id="errors_box2"></div>
+                    </div>
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#host-suggestions" data-toggle="tab">Host Suggestions</a></li>
+                        <li><a href="#vsi-suggestions" data-toggle="tab">VSI Suggestions</a></li>
+                        <li><a href="#bms-suggestions" data-toggle="tab">BMS Suggestions</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active tab-pane-suggestions" id="host-suggestions">
+                            <div class="form-group">
+                                <label for="host_id_prefix">host-id-prefix:</label>
+                                <input type="text" class="form-control" id="host_id_prefix" placeholder="e.g. host"
+                                       data-toggle="tooltip" data-placement="bottom"
+                                       title="This is used for generating suggested ID when adding a new host. For
+                                       example, if you enter &quot;host&quot; - the suggested IDs will look like
+                                        &quot;host2&quot;, &quot;host3&quot;, &quot;host4&quot;..."
+                                >
+                            </div>
+                        </div>
+
+                        <div class="tab-pane tab-pane-suggestions" id="vsi-suggestions">
+                            <div class="form-group">
+                                <label for="vsi_id_prefix">vsi-id-prefix:</label>
+                                <input type="text" class="form-control" id="vsi_id_prefix" placeholder="e.g. vsi"
+                                       data-toggle="tooltip" data-placement="bottom"
+                                       title="This is used for generating suggested ID when adding a new VSI. For
+                                       example, if you enter &quot;vsi&quot; - the suggested IDs will look like
+                                        &quot;vsi2&quot;, &quot;vsi3&quot;, &quot;vsi4&quot;..."
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="suggested_switchIPv4Addr">Switch IPv4 Address:</label>
+                                <input type="text" class="form-control" id="suggested_switchIPv4Addr" placeholder="e.g. 10.10.100.1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="suggested_switchIPv4Mask">Switch IPv4 Mask:</label>
+                                <input type="text" class="form-control" id="suggested_switchIPv4Mask" placeholder="e.g. 255.255.2555.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="suggested_controllerIPv4">Controller IPv4:</label>
+                                <input type="text" class="form-control" id="suggested_controllerIPv4" placeholder="e.g. 10.10.100.100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="suggested_controllerPort">Controller port:</label>
+                                <input type="number" class="form-control" id="suggested_controllerPort" placeholder="e.g. 6633"
+                                       onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.which == 8'>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane tab-pane-suggestions" id="bms-suggestions">
+                            <div class="form-group">
+                                <label for="bms_id_prefix">bms-id-prefix:</label>
+                                <input type="text" class="form-control" id="bms_id_prefix" placeholder="e.g. bms"
+                                       data-toggle="tooltip" data-placement="bottom"
+                                       title="This is used for generating suggested ID when adding a new bare metal server. For
+                                       example, if you enter &quot;bms&quot; - the suggested IDs will look like
+                                        &quot;bms2&quot;, &quot;bms3&quot;, &quot;bms4&quot;..."
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- / Modal body -->
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-ok" class="btn btn-primary" data-dismiss="modal">
+                        <i class="fa fa-fw fa-check"></i>
+                        OK
+                    </button>
+                </div> <!-- / Modal footer -->
+            </div> <!-- / Modal content -->
+        </div>
+    </div>
+
+
+    <div id="node-popUp" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="close-btn-top" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="operation"></h4>
+                </div>
+
+                <div class="modal-body">
+                    <div id="error_alert" class="alert alert-danger hidden" style="padding-left: 0; padding-right: 5px;">
+                        <div id="errors_box"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="node-type">Node Type:</label>
+                        <select class="form-control" id="node-type">
+                            <option value="host" selected>Host</option>
+                            <option value="vsi">VSI</option>
+                            <option value="bms">Bare Metal Server</option>
+                        </select>
+                    </div>
+
+                    <div id="host-inputs">
+                        <div class="form-group">
+                            <label for="host-id">ID:</label>
+                            <input type="text" class="form-control" id="host-id" placeholder="e.g. controller">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="host-location">Location:</label>
+                            <select class="form-control" id="host-location">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="host-image">Image:</label>
+                            <select class="form-control" id="host-image">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="host-flavor">Flavor:</label>
+                            <select class="form-control" id="host-flavor">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="vsi-inputs" class="hidden">
+                        <div class="form-group">
+                            <label for="vsi-id">ID:</label>
+                            <input type="text" class="form-control" id="vsi-id" placeholder="e.g. vsi1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vsi-location">Location:</label>
+                            <select class="form-control" id="vsi-location">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vsi-switchIPv4Addr">Switch IPv4 Address:</label>
+                            <input type="text" class="form-control" id="vsi-switchIPv4Addr" placeholder="e.g. 10.10.100.1" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vsi-switchIPv4Mask">Switch IPv4 Mask:</label>
+                            <input type="text" class="form-control" id="vsi-switchIPv4Mask" placeholder="e.g. 255.255.2555.0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vsi-switchMode">Switch Mode:</label>
+                            <select class="form-control" id="vsi-switchMode">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vsi-controller-ipv4">Controller IPv4:</label>
+                            <input type="text" class="form-control" id="vsi-controller-ipv4" placeholder="e.g. 10.10.100.100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vsi-controller-port">Controller port:</label>
+                            <input type="text" class="form-control" id="vsi-controller-port" placeholder="e.g. 6633"
+                                   onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.which == 8'>
+                        </div>
+                    </div>
+
+                    <div id="bms-inputs" class="hidden">
+                        <div class="form-group">
+                            <label for="bms-id">ID:</label>
+                            <input type="text" class="form-control" id="bms-id" placeholder="e.g. bms1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bms-location">Location:</label>
+                            <select class="form-control" id="bms-location">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bms-image">Image:</label>
+                            <select class="form-control" id="bms-image">
+                            </select>
+                        </div>
+                    </div>
+                </div> <!-- / Modal body -->
+
+                <div class="modal-footer">
+                    <button id="cancel-button" type="button" data-dismiss="modal" class="btn btn-default">
+                        Cancel
+                    </button>
+
+                    <button type="button" id="saveButton" class="btn btn-primary">
+                        <i class="fa fa-fw fa-check"></i>
+                        <span id="saveButton-text"></span>
+                    </button>
+                </div> <!-- / Modal footer -->
+            </div> <!-- / Modal content -->
+        </div>
+    </div>
+
+    <div id="link-popUp" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add Link</h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="bandwidth">Bandwidth in <span id="bandwidth-unit"></span>:</label>
+                        <input id="bandwidth"
+                               type="number"
+                               min="0"
+                               step="100"
+                               class="form-control"
+                               placeholder="e.g. 10000"
+                               onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.which == 8'
+                               data-toggle="tooltip" data-placement="bottom" data-trigger="focus"
+                        >
+                    </div>
+
+                    <div id="vsi-port-settings-1" class="row hidden">
+                        <h5 class="vsi-port-settings-heading">
+                            <strong>
+                                <span id="vsi-dsl_id-1" class="label label-primary"></span>
+                                to
+                                <span id="non-vsi-dsl_id-1" class="label label-primary"></span>
+                                port settings:
+                            </strong>
+                        </h5>
+
+                        <div class="col-md-6">
+                            <select class="form-control" id="select-vsi-port-type-1">
+                                <option value="logicalPort">logicalPort</option>
+                                <option id="mode-1" value="mode">mode</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-1 text-center equal-sign">
+                            =
+                        </div>
+
+                        <div class="col-md-5">
+                            <input type="text" id="input-vsi-port-type-1" class="form-control">
+                        </div>
+                    </div>
+
+                    <div id="vsi-port-settings-2" class="row hidden">
+                        <h5 class="vsi-port-settings-heading">
+                            <strong>
+                                <span id="vsi-dsl_id-2" class="label label-primary"></span>
+                                to
+                                <span id="non-vsi-dsl_id-2" class="label label-primary"></span>
+                                port settings:
+                            </strong>
+                        </h5>
+
+                        <div class="col-md-6">
+                            <select class="form-control" id="select-vsi-port-type-2">
+                                <option value="logicalPort">logicalPort</option>
+                                <option id="mode-2" value="mode">mode</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-1 text-center equal-sign">
+                            =
+                        </div>
+
+                        <div class="col-md-5">
+                            <input type="text" id="input-vsi-port-type-2" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="btn-cancel-add-link" type="button" data-dismiss="modal" class="btn btn-default">
+                        Cancel
+                    </button>
+
+                    <button type="button" id="link-saveButton" class="btn btn-primary">
+                        <i class="fa fa-fw fa-check"></i>
+                        <span id="link-saveButton-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-link-error" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">
+                        <i class="fa fa-exclamation-triangle fa-fw"></i>
+                        Add Link - Error
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+                    <h4>You cannot connect a node to itself.</h4>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" id="cancelButton" class="btn btn-default">
+                        &nbsp;
+                        &nbsp;
+                        OK
+                        &nbsp;
+                        &nbsp;
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

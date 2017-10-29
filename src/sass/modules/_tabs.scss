@@ -1,0 +1,37 @@
+.tab-content {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background-color: #ffffff;
+
+  #dsl, #ie {
+    padding: 10px;
+  }
+}
+
+.nav-tabs {
+  margin-bottom: 0;
+  background-color: #ffffff;
+}
+
+.bordered {
+  border: 1px solid #ddd;
+}
+
+.nav-tabs > li > a {
+  border-radius: 0;
+  color: #333;
+}
+
+.nav-tabs.bordered > :first-child a {
+  border-left-width: 0 !important;
+}
+
+.nav-tabs > li.active > a {
+  -webkit-box-shadow: 0 -3px 0 #337AB7;
+  -moz-box-shadow: 0 -3px 0 #337AB7;
+  box-shadow: 0 -3px 0 #337AB7;
+  border-top-width: 0 !important;
+  margin-top: 1px !important;
+  font-weight: 700;
+}
