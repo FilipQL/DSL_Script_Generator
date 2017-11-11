@@ -237,7 +237,7 @@ class DSL {
     link {
         id = "${link.name}"
         port { id = "src" }
-        port { id = "dst" }${link.bandwidth ? `\n\t\tbandwidth = "${link.bandwidth}"` : ``}
+        port { id = "dst" }${link.bandwidth ? `\n\t\tbandwidth = ${link.bandwidth}` : ``}
     }\n\t`
         });
 
@@ -379,7 +379,7 @@ class DSL {
         return `<pre class="tooltip-pre"><code>link {
     id = "${edge.name}"
     port { id = "src" }
-    port { id = "dst" }${edge.bandwidth ? `\n\tbandwidth = "${edge.bandwidth}"` : ``}
+    port { id = "dst" }${edge.bandwidth ? `\n\tbandwidth = ${edge.bandwidth}` : ``}
 }
 adjacency ${nodes.get(edge.from).dsl_id}.${edge.from_port}, ${edge.name}.src
 adjacency ${nodes.get(edge.to).dsl_id}.${edge.to_port}, ${edge.name}.dst</code></pre>`;
