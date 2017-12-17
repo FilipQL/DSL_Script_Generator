@@ -9,6 +9,7 @@ var config = {
             "bra": "Bratislava (bra)",
             "ham": "Hamburg (ham)",
             "lon": "London (lon)",
+            "mad": "Madrid (mad)",
             "mil": "Milan (mil)",
             "par": "Paris (par)" //,
             //"prg": "Prague (prg)"
@@ -19,6 +20,7 @@ var config = {
             "bra": "Bratislava (bra)",
             "ham": "Hamburg (ham)",
             "lon": "London (lon)",
+            "mad": "Madrid (mad)",
             "mil": "Milan (mil)",
             "par": "Paris (par)" //,
             //"prg": "Prague (prg)"
@@ -29,6 +31,7 @@ var config = {
             "bra": "Bratislava (bra)",
             "ham": "Hamburg (ham)",
             "lon": "London (lon)",
+            "mad": "Madrid (mad)",
             "mil": "Milan (mil)",
             "par": "Paris (par)" //,
             //"prg": "Prague (prg)"
@@ -57,6 +60,7 @@ var config = {
     flavors: {
         host: [
             "c1r1h10",
+            "c2r2h10",
             "c2r2h20",
             "c3r3h30"
         ],
