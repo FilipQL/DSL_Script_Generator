@@ -20,7 +20,7 @@ $('a[href="#dsl"], #ie-tab').on('show.bs.tab', function (e) {
     //});
 
     if (!(new RegExp("^([a-zA-Z$][a-zA-Z0-9]*)$")).test(id)) {
-        alert('Illegal format for the value in the ID field.');
+        alert('Illegal format for the value in the ID field.\nThe ID should start with a letter followed\nby an optional number of letters and digits.');
         return false;
     }
 });

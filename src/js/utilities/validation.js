@@ -21,7 +21,7 @@ export function isValidId(adding, dsl_id, errors)
         });
 
         if (existing_ids.includes(dsl_id.toLowerCase())) {
-            errors.push(`Entered <strong>ID</strong> has already been taken.`);
+            errors.push(`This <strong>ID</strong> has already been taken.`);
         }
     }
 
