@@ -1,4 +1,4 @@
-import data from '../lab_setup/data'
+import data from '../setup/data'
 
 /**
  * Check if the entered DSL ID is unique.

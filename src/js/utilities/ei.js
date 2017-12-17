@@ -1,6 +1,6 @@
-import data from './../lab_setup/data'
-import network from './../lab_setup/vis_setup'
-import app from './../lab_setup/config'
+import data from '../setup/data'
+import network from '../setup/vis_setup'
+import app from '../setup/config'
 import { saveAs } from 'file-saver';
 
 

@@ -1,5 +1,5 @@
-require('./lab_setup/vis_setup');
-require('./lab_setup/dsl_setup');
+require('./setup/vis_setup');
+require('./setup/dsl_setup');
 import Clipboard from 'clipboard';
 import { saveAs } from 'file-saver';
 require('./utilities/ei');
