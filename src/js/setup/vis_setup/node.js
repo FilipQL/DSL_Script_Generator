@@ -5,7 +5,7 @@ import {isValidId, isValidIPv4Address, isValidIPv4Mask, isValidPortNumber} from 
 
 
 /**
- * Add a new node (host, vsi or bms) to the Vis Network (to the Lab Setup).
+ * Add a new node (host, vsi or bms) to the Vis Network.
  *
  * @param nodeData
  * @param callback
@@ -68,11 +68,12 @@ export function editNode(nodeData, callback) {
 export function deleteNode(deleteData, callback) {
     // Delete Node Port property (of the "ports" property; e.g. ports: {p1: 'p1'} - see data.js).
     /*
-      Vidi prvo edge.js pa se onda vrati na ovo.
-      Ovo se primenjuje pre callback-a sto znaci da ce se primeniti na oba noda... ali nakon callbacka bice vidljivo
-      samo za node koji nije obrisan a koji je bio povezan sa onim sto je obrisan...
-      Fora je sto ovo mora da se radi jer brisanjem noda se brisu svi edgovi koji su povezani na njega... a Vis u tom
-      slucaju ne okida deleteEdge...
+      Check the edge.js first in order for this to make any sense.
+      Two things we should keep in mind here:
+       1) removing a node also removes its edges
+       2) Vis doesn't trigger deleteEdge() for the edges in 1)
+      This is used before the callback, which means we are applying it on both nodes even though only the one
+      which is not deleted is actually going to be affected by it...
     */
     deleteData.edges.forEach(function(edgeId) {
         let edge = data.edges.get(edgeId);
@@ -146,7 +147,7 @@ function initInputValues(nodeData = null) {
         //}).length;
         let host_count = 0;
 
-        // Prevent suggesting an id that is already used:
+        // Prevent suggesting an id that is already in use:
         while (dsl_ids.includes(`${app.suggestions.host_id_prefix}${host_count + 1}`)) {
             host_count++;
         }
@@ -159,7 +160,7 @@ function initInputValues(nodeData = null) {
         //}).length;
         let vsi_count = 0;
 
-        // Prevent suggesting an id that is already used:
+        // Prevent suggesting an id that is already in use:
         while (dsl_ids.includes(`${app.suggestions.vsi_id_prefix}${vsi_count + 1}`)) {
             vsi_count++;
         }
@@ -176,7 +177,7 @@ function initInputValues(nodeData = null) {
         //}).length;
         let bms_count = 0;
 
-        // Prevent suggesting an id that is already used:
+        // Prevent suggesting an id that is already in use:
         while (dsl_ids.includes(`${app.suggestions.bms_id_prefix}${bms_count + 1}`)) {
             bms_count++;
         }

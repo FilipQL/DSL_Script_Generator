@@ -94,7 +94,7 @@ export function addEdge(edgeData, callback) {
         let nodeOne = data.nodes.get(edgeData.from);
         let nodeTwo = data.nodes.get(edgeData.to);
 
-        if (nodeOne.group != 'vsi' && nodeTwo.group != 'vsi') /* ---------- IF BOTH OF NODES ARE NOT VSI ---------- */
+        if (nodeOne.group != 'vsi' && nodeTwo.group != 'vsi') /* ---------- IF NONE OF THE NODES IS VSI ---------- */
         {
             $("#vsi-port-settings-1, #vsi-port-settings-2").addClass("hidden"); // Hide VSI Port Settings
 
@@ -123,7 +123,7 @@ export function addEdge(edgeData, callback) {
                 $('#link-popUp').modal('hide'); // Hide Modal
             };
         }
-        else if (nodeOne.group == 'vsi' && nodeTwo.group == 'vsi') /* ---------- IF BOTH OF NODES ARE VSI ---------- */
+        else if (nodeOne.group == 'vsi' && nodeTwo.group == 'vsi') /* ---------- IF BOTH NODES ARE VSI ---------- */
         {
             $("#vsi-port-settings-1, #vsi-port-settings-2").removeClass("hidden");
 
@@ -298,8 +298,8 @@ export function deleteNodePort(node, port) {
 
 /**
  * Update the names of the links so that their names start from 1...
- * This ensures that between the two nodes there will be no links with the same names
- * (after deleting the existing and then adding new links between the two nodes).
+ * This ensures that link names are unique for any given pair of nodes
+ * (for example, after deleting and adding of new links between the same two nodes).
  *
  * @param connected_nodes
  */
@@ -320,7 +320,7 @@ function fixLinksNames(connected_nodes) {
 
 
 /**
- * Check if VSI already has controller port ("pC") and if it has - hide "mode" option because it can have only one.
+ * Check if VSI already has the controller port ("pC") and if it has, hide the "mode" option because it can only have one of these.
  *
  * @param vsiNode
  * @param optionId
@@ -394,15 +394,17 @@ function setVsiPort(node, vsiPortType, vsiPortValue, edgeData) {
 /**
  * Set the 'name', 'from_port', 'to_port' & properties for the newly added edge (link).
  *
- * Nazivi linkova se formiraju na sledeci nacin:
- *     - Ako se spajaju bms i host ILI bms i vsi => PRVO ide bms-ov dsl_id PA onda od ovog drugog, PA onda link_suffix
- *       PA broj (broj = koji je to link po redu izmedju ta dva noda);
- *     - Ako se spajaju host i vsi => PRVO host.dsl_id PA vsi.dsl_id PA link suffix PA broj;
- *     - Ako se spajaju nodovi koji su istog tipa (pripadaju istoj grupi) - poredimo stringove (dsl_id-ove) =>
- *       manji string (dsl_id) uvek ide prvo;
- * Takodje, from_port ce uvek biti bms-ov id porta (ako je jedan od nodova koji se spajaju bms), ili hostov id porta
- * ako se povezuju host i vsi... ako su istog tipa - vazi isto pravilo kao iznad... Ovo radimo da bi nam DSL bio
- * konzistentan (posebno adjacency skript).
+ * Link names are formed in the following order:
+ *     - if we are connecting BMS and host or BMS and VSI:
+ *        BMS id + other node id + suffix + number;
+ *        the "from" port belongs to BMS
+ *     - if we are connection host and VSI:
+ *       host id + VSI id + suffix + number;
+ *       the "from" port belongs to host
+ *     - if we are connection the nodes of the same type:
+ *       "smaller" id + "bigger" id + suffix + number;
+ *       the "from" port belongs to the node with "smaller" id
+ * This helps DSL look more consistent and makes it easier to read (especially its adjacency part)
  *
  * @param edgeData
  * @param nodeOne
@@ -421,7 +423,7 @@ function setEdgeProperties(edgeData, nodeOne, nodeTwo, nodeOnePort, nodeTwoPort,
 
     if ((nodeOne.group != nodeTwo.group))
     {
-        if (_.includes([nodeOne.group, nodeTwo.group], "bms")) // BMS se povezuje sa non-BMS nodom
+        if (_.includes([nodeOne.group, nodeTwo.group], "bms")) // BMS connected to a non-BMS node
         {
             if (nodeOne.group == "bms")
             {
@@ -436,12 +438,12 @@ function setEdgeProperties(edgeData, nodeOne, nodeTwo, nodeOnePort, nodeTwoPort,
                 edgeData.from_port = nodeTwoPort;
                 edgeData.to_port = nodeOnePort;
 
-                // Da adjacency skript bude konzistentan...
+                // Makes the adjacency part of the DSL easier to read.
                 edgeData.from = nodeTwo.id;
                 edgeData.to = nodeOne.id;
             }
         }
-        else // Host se povezuje sa VSI
+        else // Host connected to a VSI
         {
             if (nodeOne.group == "host")
             {
